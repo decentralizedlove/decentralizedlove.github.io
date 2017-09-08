@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+
+	<style type="text/css">
+		.verde {
+			color: #00e705;
+		}
+		.verdeos {
+			color: #064e00;
+		}
+		.rojo {
+			color: #ff2323;
+		}
+		.rojoos {
+			color: #a70000;
+		}
+		.gris {
+			color: grey;
+		}
+	</style>
+</head>
+<body style="text-align: center;color: grey;background: black;">
+
+
+<h1><div id="tmarket"></div></h1>
+	
+</body>
+<script src="lib/jquery/jquery.min.js"></script>
+<script>
+
+	var texto = '';
+	var color = 'gris';
+	var lastColor = '';
+	var lastPrice = 0;
+
+    $(document).ready(function(){
+
+        	$.getJSON('https://api.coinmarketcap.com/v1/global/').done(function(data) {
+        		$('#tmarket').html(data.total_market_cap_usd + '<br>');
+        		texto = data.total_market_cap_usd;
+		    });   
+		    
+
+			function update() {
+		        $.getJSON('https://api.coinmarketcap.com/v1/global/').done(function(data) {
+		        	if (data.total_market_cap_usd < lastPrice){
+		        		color = 'rojo';
+		        		lastColor = 'rojo';
+		        	} else if (data.total_market_cap_usd > lastPrice){
+		        		color = 'verde';
+		        		lastColor = 'verde';
+		        	} else {
+		        		if (lastColor == "verde"){
+		        			color = 'verdeos';
+		        		} else if (lastColor == "rojo"){
+		        			color = 'rojoos';
+		        		} else {
+		        			color = 'gris';
+		        		}
+		        		
+		        	}
+
+        			texto = '<span class=' + color + '>' + data.total_market_cap_usd + '</span><br>' + texto;
+			        $('#tmarket').html(texto);
+
+			        lastPrice = data.total_market_cap_usd;
+			    }); 
+		    }
+
+
+			var interval = window.setInterval(update, 10000);
+		
+
+    });
+</script>
+
+</html>
